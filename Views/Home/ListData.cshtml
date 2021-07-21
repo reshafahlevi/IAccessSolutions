@@ -1,0 +1,94 @@
+﻿@model PagedList.IPagedList<IAccessSolutions.Models.CSVEntities>
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+    </script>
+
+    <script type="text/javascript">
+        function MyFunction_Search_With_JavaScript() {
+            $(document).ready(function () {
+
+                $("#Textbox_Search").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+
+                    var totalRowCount = 0;
+                    var rowCount = 0;
+                    var table = document.getElementById("Table_GridView");
+                    var rows = table.getElementsByTagName("tr")
+
+
+                    $("#Table_GridView tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+
+                    });
+                });
+
+            });
+        }
+
+
+        function MyFunction_Search_With_Controller() {
+            var Obj_POST_String_Content = $('#Textbox_Search').val();
+
+            $.ajax({
+                url: "/Home/Search_Data",
+                data: "{Obj_Post:'" + Obj_POST_String_Content + "'}",
+
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "JSON",
+                success: function (result) {
+
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+
+        }
+    </script>
+
+}
+
+<h2>List Data</h2>
+
+@if (Model != null)
+{
+    <br>
+    <div class="" style="text-align: left !important; float: left !important;">
+        <div class="form-group">
+            <input type="text" id="Textbox_Search" onkeyup="return MyFunction_Search_With_JavaScript();" ClientIDMode="Static" name="Textbox_Search" class="form-control" placeholder="Search Here..." style="width: 145% !important;" />
+            <input type="submit" onclick="return MyFunction_Search_With_Controller();" id="Button_Search" ClientIDMode="Static" title="Search Data" value="Search Data" class="btn btn-warning" style="width: 145% !important; margin-top: 15px !important;" />
+        </div>
+    </div>
+
+    <table id="Table_GridView" ClientIDMode="Static" class="table table-striped table-bordered dt-responsive nowrap">
+        <tr>
+            <th id="td_String_ID" ClientIDMode="Static" style="text-align:center !important;">String ID</th>
+            <th id="td_String_Content" ClientIDMode="Static" style="text-align:center !important;">String Content</th>
+            <th id="td_Match_Times" ClientIDMode="Static" style="text-align:center !important;">Match Times</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(model => item.String_ID)</td>
+                <td>@Html.DisplayFor(modelItem => item.String_Content)</td>
+                <td>@Html.DisplayFor(modelItem => item.Match_Times)</td>
+            </tr>
+        }
+    </table>
+}
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("ListData", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

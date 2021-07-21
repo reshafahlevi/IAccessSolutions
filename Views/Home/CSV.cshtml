@@ -1,0 +1,145 @@
+﻿@model IEnumerable<IAccessSolutions.Models.CSVEntities>
+@*@model IAccessSolutions.Models.CSVEntities*@
+
+@section Scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+    </script>
+
+    <script type="text/javascript">
+
+        function MyFunction_Search_With_JavaScript() {
+            $(document).ready(function ()
+            {
+
+                $("#Textbox_Search").on("keyup", function ()
+                {
+                    //var value = $(this).val().toLowerCase();
+                    var value = $('#Textbox_Search').val().toLowerCase();
+
+                    $("#Table_GridView tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+
+                    });
+                });
+
+            });
+
+        }
+
+        function MyFunction_Search_With_Button() {
+            $(document).ready(function ()
+            {
+
+                var value = $('#Textbox_Search').val().toLowerCase();
+
+                $("#Table_GridView tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+        }
+
+        function MyFunction_Search_With_Controller() {
+            var Obj_POST_String_Content = $('#Textbox_Search').val();
+
+            //var OBJ =
+            //{
+            //    /*String_ID: Obj_POST_String_Content,*/
+            //    String_Content: Obj_POST_String_Content,
+            //};
+
+            $.ajax({
+                url: "/Home/Search_Data",
+                /*data: JSON.stringify(OBJ),*/
+                data: "{Obj_Post:'" + Obj_POST_String_Content + "'}",
+
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "JSON",
+                success: function (result) {
+
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+
+        }
+
+    </script>
+
+}
+
+<h2>Create, Upload and Read CSV file</h2>
+
+<br>
+
+<div class="container">
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <div class="row">
+               
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: left !important; float: left !important;">
+                            @using (Html.BeginForm("Insert_Data", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                <div class="form-group">
+                                    <label style="margin-top: 7px !important;">File Upload CSV</label>
+                                    <br>
+                                    <input type="file" id="postedFile" ClientIDMode="Static" name="postedFile" class="form-control" accept=".csv" />
+                                    <br>
+                                    <input type="submit" id="Button_Upload_Data" ClientIDMode="Static" title="Insert data (Upload)" value="Insert data (Upload)" class="btn btn-success" style="width: 100% !important;" />
+                                </div>
+                            }
+                            <div class="form-group">
+                                <input type="submit" id="Button_Create_File" onclick="location.href='@Url.Action("Create_CSV_File", "Home")'" ClientIDMode="Static" title="Create CSV file" value="Create CSV file" class="btn btn-primary" style="width: 100% !important;" />
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+     
+    </div>
+</div>
+
+
+
+@if (Model != null)
+{
+    <hr>
+    <br>
+    <div class="" style="text-align: left !important; float: left !important;">
+        <div class="form-group">
+            <input type="text" onkeypress="return MyFunction_Search_With_JavaScript();" id="Textbox_Search" ClientIDMode="Static" name="Textbox_Search" class="form-control" placeholder="Search Here..." style="width: 145% !important;" />
+            <input type="submit" onclick="return MyFunction_Search_With_Button();" id="Button_Search" ClientIDMode="Static" title="Search Data" value="Search Data" class="btn btn-warning" style="width: 145% !important; margin-top: 15px !important;" />
+        </div>
+    </div>
+
+    <table id="Table_GridView" ClientIDMode="Static" class="table table-striped table-bordered dt-responsive nowrap">
+        <tr>
+            <th id="td_String_ID" ClientIDMode="Static" style="text-align:center !important;">String ID</th>
+            <th id="td_String_Content" ClientIDMode="Static" style="text-align:center !important;">String Content</th>
+            <th id="td_Match_Times" ClientIDMode="Static" style="text-align:center !important;">Match Times</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(model => item.String_ID)</td>
+                <td>@Html.DisplayFor(modelItem => item.String_Content)</td>
+                <td>@Html.DisplayFor(modelItem => item.Match_Times)</td>
+            </tr>
+        }
+    </table>
+}
+
+
+
+
+
