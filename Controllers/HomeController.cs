@@ -35,13 +35,20 @@ namespace IAccessSolutions.Controllers
         public ActionResult Insert_Data(HttpPostedFileBase postedFile)
         {
             var CSV_Extention = ConfigurationManager.AppSettings["CSV_Extention"].ToString();
+            var Path_Upload = ConfigurationManager.AppSettings["Path_Upload"].ToString();
             var Result_List_CSV = new List<CSVEntities>();
            
-
             if (postedFile != null)
             {
                 try
                 {
+
+                    string Location = Server.MapPath(Path_Upload);
+                    if (!Directory.Exists(Location))
+                    {
+                        Directory.CreateDirectory(Location);
+                    }
+
                     string File_Extension = Path.GetExtension(postedFile.FileName);
                     string File_Name = Path.GetFileName(postedFile.FileName);
                     string File_Path = Server.MapPath("~/Uploads/" + File_Name);
