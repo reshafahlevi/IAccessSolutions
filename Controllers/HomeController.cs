@@ -137,8 +137,6 @@ namespace IAccessSolutions.Controllers
             try
             {
                 string csv = string.Empty;
-
-                //Download the CSV file.
                 Response.Clear();
                 Response.Buffer = true;
                 Response.AddHeader("content-disposition", "attachment;filename=File Test.csv");
